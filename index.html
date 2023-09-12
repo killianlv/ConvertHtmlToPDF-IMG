@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <title>HTMLToPDF</title>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="mb-4">Convertir HTML en PDF ou en Image</h1>
+            <form action="/convert" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="htmlFile">Sélectionner un fichier HTML :</label>
+                    <input type="file" class="form-control-file" id="htmlFile" name="htmlFile" accept=".html">
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="conversionType" id="convertToPDF" value="pdf" checked>
+                    <label class="form-check-label" for="convertToPDF">
+                        Convertir en PDF
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="conversionType" id="convertToImage" value="image">
+                    <label class="form-check-label" for="convertToImage">
+                        Convertir en Image
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Convertir</button>
+            </form>
+        </div>
+    </body>
+</html>
