@@ -16,27 +16,29 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+async function openBrowserAndLoadHtml(htmlFilePath) {
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
+    const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
+    await page.setContent(htmlContent);
+    return { browser, page };
+}
+
 async function convertToPdf(htmlFilePath) {
-  const pdfFilePath = `output.pdf`;
-  const browser = await puppeteer.launch({ headless: 'new' });
-  const page = await browser.newPage();
-  const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
-  await page.setContent(htmlContent);
-  await page.pdf({ path: pdfFilePath, format: 'A4' });
-  await browser.close();
-  return pdfFilePath;
+    const { browser, page } = await openBrowserAndLoadHtml(htmlFilePath);
+    const pdfFilePath = `output.pdf`;
+    await page.pdf({ path: pdfFilePath, format: 'A4' });
+    await browser.close();
+    return pdfFilePath;
 }
 
 async function convertToImage(htmlFilePath) {
-  const imageFilePath = `output.png`;
-  const browser = await puppeteer.launch({ headless: 'new' });
-  const page = await browser.newPage();
-  const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
-  await page.setContent(htmlContent);
-  const screenshot = await page.screenshot();
-  await sharp(screenshot).toFile(imageFilePath);
-  await browser.close();
-  return imageFilePath;
+    const { browser, page } = await openBrowserAndLoadHtml(htmlFilePath);
+    const imageFilePath = `output.png`;
+    const screenshot = await page.screenshot();
+    await sharp(screenshot).toFile(imageFilePath);
+    await browser.close();
+    return imageFilePath;
 }
 
 app.post('/convert', upload.single('htmlFile'), async (req, res) => {
@@ -51,7 +53,7 @@ app.post('/convert', upload.single('htmlFile'), async (req, res) => {
     } else if (conversionType === 'image') {
       filePath = await convertToImage(htmlFilePath);
     } else {
-      throw new Error('Type de conversion invalide');
+      throw new Error('Invalid conversion type');
     }
 
     res.download(filePath, () => {
